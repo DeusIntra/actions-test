@@ -1,21 +1,28 @@
-name: "Deploy"
+name: Deploy Website
+
 on:
   push:
-    branches: ["main"]
+    branches:
+      - main  # or 'master' if your repo uses master
 
 jobs:
   deploy:
-    name: Deploy
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: install ssh keys
-      # check this thread to understand why its needed:
-      # <https://stackoverflow.com/a/70447517>
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup SSH with ed25519 key
       run: |
-        sudo mkdir -p ~/.ssh/
-        sudo chmod 600 ~/.ssh/
-        sudo echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
-        sudo ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
-        sudo ssh ${{ secrets.SSH_USER}}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORKING_DIR }} && git pull"
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+        chmod 600 ~/.ssh/id_ed25519
+        ssh-keyscan -t ed25519 -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+    - name: Deploy to server
+      run: |
+        ssh -i ~/.ssh/id_ed25519 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+          cd ${{ secrets.WORKING_DIR }}
+          git pull
+        EOF

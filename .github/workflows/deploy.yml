@@ -14,7 +14,8 @@ jobs:
       # check this thread to understand why its needed:
       # <https://stackoverflow.com/a/70447517>
       run: |
-        install -m 600 -D /dev/null ~/.ssh/id_ed25519
+        mkdir -p ~/.ssh/
+        chmod 600 ~/.ssh/
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
         ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
         ssh ${{ secrets.SSH_USER}}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORKING_DIR }} && git pull"

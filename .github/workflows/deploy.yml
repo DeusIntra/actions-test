@@ -14,8 +14,8 @@ jobs:
       # check this thread to understand why its needed:
       # <https://stackoverflow.com/a/70447517>
       run: |
-        mkdir -p ~/.ssh/
-        chmod 600 ~/.ssh/
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
-        ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
-        ssh ${{ secrets.SSH_USER}}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORKING_DIR }} && git pull"
+        sudo mkdir -p ~/.ssh/
+        sudo chmod 600 ~/.ssh/
+        sudo echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+        sudo ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
+        sudo ssh ${{ secrets.SSH_USER}}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORKING_DIR }} && git pull"
